@@ -59,12 +59,12 @@ StormData %>%
 # Sorted by Fatilites
 Mortality.smry[order(-Fatalities)] %>%
     select(Evtype, Fatalities) %>%
-    head(10) -> fatalities
+    head(11) -> fatalities
 
 # Sorted by Injuries
 Mortality.smry[order(-Injuries)] %>%
     select(Evtype, Injuries) %>%
-    head(10) -> injuries
+    head(11) -> injuries
 
 
 # Fatalities Plot
@@ -74,7 +74,7 @@ ggplot(fatalities, aes(x = Evtype, y = Fatalities, fill=Evtype)) +
     theme(axis.text.x = bold.16.text) +
     xlab("Event Type") + ylab("Fatalities") +
     ggtitle("Top 10 Fatalities") +
-    scale_fill_manual(values = mypal(10))
+    scale_fill_manual(values = mypal(11))
 
 # Injuries Plot
 ggplot(injuries, aes(x = Evtype, y = Injuries, fill=Evtype)) +
@@ -83,6 +83,32 @@ ggplot(injuries, aes(x = Evtype, y = Injuries, fill=Evtype)) +
     theme(axis.text.x = bold.16.text) +
     xlab("Event Type") + ylab("Injuries") +
     ggtitle("Top 10 Injuries") +
-    scale_fill_manual(values = mypal(10))
+    scale_fill_manual(values = mypal(11))
 
+# Economic Impact
 
+StormData %>%
+    select(Evtype, Propdmg, Cropdmg) %>%
+    group_by(Evtype) %>%
+    summarise_each(funs(sum)) -> Economics.smry
+
+property_dmg <- sum(Economics.smry$Propdmg)
+crop_dmg <- sum(Economics.smry$Cropdmg)
+
+property_top10 <- sum(head(sort(Economics.smry$Propdmg, decreasing = TRUE), 10))
+crop_top10 <- sum(head(sort(Economics.smry$Cropdmg, decreasing = TRUE), 10))
+
+# The top 10 event types over the years account for over 90% of the
+# property and crop damage reported.  Therefore, I think that simply reporting the
+# top 10 events of all classes will be enough.
+#
+# Except that Thunderstorm Wind and TSTM Wind should be lumped together.
+#
+# Arggh
+
+property_top10/property_dmg
+# 91%
+crop_top10/crop_dmg
+# 93%
+
+grep("WIND", unique(StormData$Evtype))
