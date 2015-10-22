@@ -111,4 +111,55 @@ property_top10/property_dmg
 crop_top10/crop_dmg
 # 93%
 
-grep("WIND", unique(StormData$Evtype))
+# From the Storm Event Table on pg 6 NWSI 10-1605 AUGUST 17, 2007
+
+weather_event_labels <- toupper(c("Astronomical Low Tide",  "Avalanche",
+                          "Blizzard", "Coastal Flood",
+                          "Cold/Windhill", "Debris Flow",
+                          "Dense Fog", "Dense Smoke",
+                          "Drought", "Dust Devil",
+                          "Dust Storm", "Excessive Heat",
+                          "Extremeold/Windhill", "Flash Flood",
+                          "Flood", "Frost/Freeze",
+                          "Funnel Cloud", "Freezing Fog",
+                          "Hail", "Heat",
+                          "Heavy Rain", "Heavy Snow",
+                          "High Surf", "High Wind",
+                          "Hurricane (Typhoon)", "Ice Storm",
+                          "Lake-Effect Snow", "Lakeshore Flood",
+                          "Lightning", "Marine Hail",
+                          "Marine High Wind", "Marine Strong Wind",
+                          "Marine Thunderstorm Wind", "Rip Current",
+                          "Seiche", "Sleet",
+                          "Storm Surge/Tide", "Strong Wind",
+                          "Thunderstorm Wind", "Tornado",
+                          "Tropical Depression", "Tropical Storm",
+                          "Tsunami", "Volcanic Ash",
+                          "Waterspout", "Wildfire",
+                          "Winter Storm", "Winter Weather"))
+
+
+StormData %>% filter(grepl("Hurricane|HURRICANE",Evtype)) -> HurricaneData
+Hurricanes <- as.character(HurricaneData$Evtype)
+
+StormData %>%
+    mutate(Evtype = as.character(Evtype)) %>%
+    mutate(EvClass = ifelse(Evtype %in% weather_event_labels, Evtype, "OTHER")) %>%
+    mutate(EvClass = ifelse(Evtype %in% Hurricanes, "HURRICANE", EvClass )) %>%
+    mutate(EvClass = ifelse(EvClass == "OTHER", paste("OTHER-", Evtype), EvClass)) %>%
+    select(EvClass, Propdmg, Cropdmg) %>%
+    group_by(EvClass) %>%
+    summarise_each(funs(sum)) -> Economics.smry
+
+# This showed a typo "THUNDERSTORM WINDS" should be "THUNDERSTORM WIND"
+
+StormData %>%
+    mutate(Evtype = as.character(Evtype)) %>%
+    mutate(EvClass = ifelse(Evtype %in% weather_event_labels, Evtype, "OTHER")) %>%
+    mutate(EvClass = ifelse(Evtype %in% Hurricanes, "HURRICANE", EvClass )) %>%
+    mutate(EvClass = ifelse(Evtype == "THUNDERSTORM WINDS", "THUNDERSTORM WIND", EvClass)) %>%
+    select(EvClass, Propdmg, Cropdmg) %>%
+    group_by(EvClass) %>%
+    summarise_each(funs(sum)) -> Economics.smry
+
+# OTHER- TSTM WIND appears to be a problem.
