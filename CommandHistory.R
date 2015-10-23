@@ -7,6 +7,7 @@ library(data.table)
 library(dplyr)
 library(tidyr)
 library(RColorBrewer)
+library(ggplot2)
 
 # Some colors and fonts
 
@@ -146,6 +147,12 @@ StormData %>%
     mutate(Evtype = as.character(Evtype)) %>%
     mutate(EvClass = ifelse(Evtype %in% weather_event_labels, Evtype, "OTHER")) %>%
     mutate(EvClass = ifelse(Evtype %in% Hurricanes, "HURRICANE", EvClass )) %>%
+    mutate(EvClass = ifelse(Evtype == "TSTM WIND", "THUNDERSTORM WIND", EvClass)) %>%
+    mutate(EvClass = ifelse(Evtype == "THUNDERSTORM WINDS", "THUNDERSTORM WIND", EvClass)) %>%
+    mutate(EvClass = ifelse(Evtype == "HIGH WINDS", "HIGH WIND", EvClass)) %>%
+    mutate(EvClass = ifelse(Evtype == "WILD/FOREST FIRE", "WILDFIRE", EvClass)) %>%
+    mutate(EvClass = ifelse(Evtype == "FLASH FLOODING", "FLASH FLOOD", EvClass)) %>%
+    mutate(EvClass = ifelse(Evtype == "URBAN/SML STREAM FLD", "FLOOD", EvClass)) %>%
     mutate(EvClass = ifelse(EvClass == "OTHER", paste("OTHER-", Evtype), EvClass)) %>%
     select(EvClass, Propdmg, Cropdmg) %>%
     group_by(EvClass) %>%
