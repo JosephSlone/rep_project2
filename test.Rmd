@@ -1,0 +1,17 @@
+---
+title: "Untitled"
+author: "Joseph B. Slone"
+date: "October 23, 2015"
+output: html_document
+---
+
+Tables
+======
+ 
+```{r table1, comment=NA, results='asis'}
+library(xtable)
+data(iris)
+print(xtable(head(iris, 10)), type = "html", include.rownames = F)
+```
+
+

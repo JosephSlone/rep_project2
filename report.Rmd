@@ -1,32 +1,29 @@
-# Command History
+---
+title: "Severe Weather Event Damage and Fatalities 1950-2011"
+author: "Joseph B. Slone"
+date: "October 23, 2015"
+output: html_document
+---
 
-# Libraries
+# Initial Setup
 
-library(R.utils)  # for bunzip2
+This preliminary code loads the required libraries and initializes some constants It then downloads and unzips the source data file.
+
+
+
+```{r initial_code, warning=FALSE, message=FALSE, echo=TRUE}
+library(R.utils)        # for bunzip2
 library(data.table)
 library(dplyr)
 library(tidyr)
 library(RColorBrewer)
 library(ggplot2)
+library(xtable)
 
-# Some colors and fonts
-
-bold.16.text <- element_text(face = "bold", size = 12)
-mypal <- colorRampPalette(brewer.pal(8, "Dark2"))
-
-# Download and un-bzip the data file
+# The URL of the source data file.
 
 data.file.URL <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
 target.file <- "StormData.csv.bz2"
-download.file(data.file.URL, target.file)
-bunzip2(target.file)
-
-# Read data into a data.table and clean up the Column Names
-
-StormData <- data.table(read.csv("StormData.csv"))
-
-
-
 
 # From the Storm Event Table on pg 6 NWSI 10-1605 AUGUST 17, 2007
 
@@ -56,12 +53,24 @@ weather_event_labels <- toupper(c("Astronomical Low Tide",  "Avalanche",
                           "Winter Storm", "Winter Weather"))
 
 
+#download.file(data.file.URL, target.file)
+#bunzip2(target.file)
+#StormData <- data.table(read.csv("StormData.csv"))
+
 # Collapse all of the different Hurricanes names into a list so that
 # we can have a generic "Hurricane Category
 
-StormData %>% filter(grepl("Hurricane|HURRICANE",EVTYPE)) -> HurricaneData
-Hurricanes <- unique(as.character(HurricaneData$EVTYPE))
+#StormData %>% filter(grepl("Hurricane|HURRICANE",EVTYPE)) -> HurricaneData
+#Hurricanes <- unique(as.character(HurricaneData$EVTYPE))
 
+
+```
+
+
+
+## Process the data
+
+```{r process_data }
 # Clean the data.  Converting the older event types into the modern
 # event types where it is reasonable to do so.
 
@@ -109,27 +118,50 @@ StormData.Cleaned %>%
     summarise_each(funs(sum)) %>%
     arrange(desc(Injuries)) -> Injuries.Summary
 
-head(Injuries.Summary, 15)
-head(Fatalities.Summary, 15)
-head(Crops.Summary, 15)
-head(Property.Summary, 15)
+```
+## Crop Damage
 
-bold.16.text <- element_text(face = "bold", size = 12)
+Cost is in dollars, not adjusted for inflation.
 
-ggplot(Fatalities.Summary, aes(x = Event.Type, y = Fatalities, fill=Event.Type)) +
-    geom_bar(stat = "identity") +
-    theme(axis.text.x=element_text(angle=45, hjust=1)) +
-    theme(axis.text.x = bold.16.text) +
-    xlab("Event Type") + ylab("Fatalities") +
-    ggtitle("Top 10 Fatalities")
+```{r CropDamage, results="asis"}
 
-ggplot(head(Fatalities.Summary, 15), aes(x=Event.Type, y = Fatalities, fill=Event.Type)) +
-    geom_bar(stat="identity") +
+xt <- xtable(head(Property.Summary, 15))
+
+print(xt, floating=FALSE, type="html", include.rownames=FALSE)
+```
+
+## Property Damage
+
+Cost is in dollars, not adjusted for inflation.
+
+```{r PropertyDamage, results="asis"}
+
+xt <- xtable(head(Crops.Summary, 15))
+
+print(xt, floating=FALSE, type="html", include.rownames=FALSE)
+```
+
+## Injuries
+
+```{r Injuries, results="asis"}
+
+xt <- xtable(head(Injuries.Summary, 15))
+print(xt, floating=FALSE, type="html", include.rownames = FALSE)
+```
+
+## Fatalities
+```{r Fatalities, results="asis", fig.align='left'}
+
+xt <- xtable(head(Fatalities.Summary, 15))
+print(xt, floating=FALSE, type="html", include.rownames=FALSE)
+
+
+```
+
+```{r Fatalities.plot, fig.align='left', fig.width=10}
+ggplot(head(Fatalities.Summary, 15), aes(x=Event.Type, y = Fatalities, fill=Event.Type)) + 
+    geom_bar(stat="identity", width=.75, position=position_dodge(width=.8)) +
     xlab("Event Type") + ylab("Fatalities") +
     ggtitle("Top 15 Fatalities") +
     theme(axis.text.x = element_blank())
-
-knit2html("report.Rmd", stylesheet="custom.css")
-
-# https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf
-
+```
