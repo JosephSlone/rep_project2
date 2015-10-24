@@ -5,10 +5,23 @@ date: "October 23, 2015"
 output: html_document
 ---
 
-# Initial Setup
+# Storm Data Analysis From NOAA Data, 1950-2011
 
-This preliminary code loads the required libraries and initializes some constants It then downloads and unzips the source data file.
+## Synopsis
 
+This "R Markdown Report" analyzes data from the NOAA Storm Database.  The database covers storm records from 1950 through November 2011. This report is intended to answer the two questions:
+
+1) Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
+
+2) Across the United States, which types of events have the greatest economic consequences?
+
+Preliminary investigation of the database reveals that the event type for some of the early records do not comply with the Storm Data Documentation found on NOAA's web site.  Therefore, the event type column has been programatically modified so that the most commonly found in the earlier dates are in-line with NOAA's current guidelines.
+
+## Data Processing
+
+### Initialization Code
+
+This preliminary code loads the required libraries and initializes some constants. It then downloads and unzips the source data file.  The 'weather_event_labels' vector that is used for modifying the event types column comes from data in the NOAA Storm Documentation pdf file.  Since the various hurricanes are named individually in the database, the event types for the named hurricanes will be changed to the single 'HURRICANE' label.
 
 
 
@@ -55,8 +68,15 @@ weather_event_labels <- toupper(c("Astronomical Low Tide",  "Avalanche",
                           "Winter Storm", "Winter Weather"))
 
 
-#download.file(data.file.URL, target.file)
-#bunzip2(target.file)
+download.file(data.file.URL, target.file)
+bunzip2(target.file)
+```
+
+```
+## Error in decompressFile.default(filename = filename, ..., ext = ext, FUN = FUN): File already exists: StormData.csv
+```
+
+```r
 StormData <- data.table(read.csv("StormData.csv"))
 
 # Collapse all of the different Hurricanes names into a list so that
@@ -68,7 +88,9 @@ Hurricanes <- unique(as.character(HurricaneData$EVTYPE))
 
 
 
-## Process the data
+### Data Cleaning and Summarizing
+
+This code chunk modifies the StormData table and brings it line with the current NOAA guidelines.  It also renames all named hurricane event types to a single type.  Each type of damage (economic or population) is then summarized individualy.
 
 
 ```r
@@ -120,7 +142,9 @@ StormData.Cleaned %>%
     arrange(desc(Injuries)) -> Injuries.Summary
 ```
 
-## Crop Damage
+### Economic Data
+
+#### Property Damage
 
 Cost is in dollars, not adjusted for inflation.
 
@@ -132,7 +156,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 23:28:11 2015 -->
+<!-- Sat Oct 24 00:14:02 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Property.Damage </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 3212258.16 </td> </tr>
@@ -152,7 +176,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
   <tr> <td> BLIZZARD </td> <td align="right"> 25318.48 </td> </tr>
    </table>
 
-## Property Damage
+#### Crop Damage
 
 Cost is in dollars, not adjusted for inflation.
 
@@ -164,7 +188,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 23:28:11 2015 -->
+<!-- Sat Oct 24 00:14:02 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Crop.Damage </th>  </tr>
   <tr> <td> HAIL </td> <td align="right"> 579596.28 </td> </tr>
@@ -183,6 +207,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
   <tr> <td> OTHER- TSTM WIND/HAIL </td> <td align="right"> 4356.65 </td> </tr>
   <tr> <td> LIGHTNING </td> <td align="right"> 3580.61 </td> </tr>
    </table>
+
 
 
 ```r
@@ -204,9 +229,9 @@ grid.arrange(p1, p2, ncol=1, nrow =2)
 
 <img src="figure/Plot1-1.png" title="plot of chunk Plot1" alt="plot of chunk Plot1" style="display: block; margin: auto auto auto 0;" />
 
+### Population Health
 
-
-## Injuries
+#### Mortality and Injuries
 
 
 ```r
@@ -215,7 +240,7 @@ print(xt, floating=FALSE, type="html", include.rownames = FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 23:28:13 2015 -->
+<!-- Sat Oct 24 00:14:03 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Injuries </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 91346.00 </td> </tr>
@@ -235,7 +260,7 @@ print(xt, floating=FALSE, type="html", include.rownames = FALSE)
   <tr> <td> BLIZZARD </td> <td align="right"> 805.00 </td> </tr>
    </table>
 
-## Fatalities
+#### Fatalities
 
 ```r
 xt <- xtable(head(Fatalities.Summary, 15))
@@ -243,7 +268,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 23:28:13 2015 -->
+<!-- Sat Oct 24 00:14:03 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Fatalities </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 5633.00 </td> </tr>

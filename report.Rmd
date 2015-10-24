@@ -136,6 +136,8 @@ StormData.Cleaned %>%
 
 ```
 
+## Results
+
 ### Economic Data
 
 #### Property Damage
@@ -176,6 +178,8 @@ p2 <- ggplot(head(Crops.Summary, 15), aes(x=Event.Type, y = Crop.Damage, fill=Ev
     ggtitle("Top 15 Crop Damage Related\nEvent Categories") +
     theme(axis.text.x = element_text(angle=45, size=12, hjust=1))
 
+# Arrange the plot into a 1x2 frame.
+
 grid.arrange(p1, p2, ncol=1, nrow =2)
 
 
@@ -212,6 +216,8 @@ p4 <- ggplot(head(Injuries.Summary, 15), aes(x=Event.Type, y = Injuries, fill=Ev
     xlab("Event Type") + ylab("Injuries") +
     ggtitle("Top 15 Injury Related\nEvent Categories") +
     theme(axis.text.x = element_text(angle=45, size=12, hjust=1))
+
+# Arrange the plot into a 1x2 frame.
 
 grid.arrange(p3, p4, ncol=1, nrow =2)
 
