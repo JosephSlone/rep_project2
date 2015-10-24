@@ -70,13 +70,6 @@ weather_event_labels <- toupper(c("Astronomical Low Tide",  "Avalanche",
 
 download.file(data.file.URL, target.file)
 bunzip2(target.file)
-```
-
-```
-## Error in decompressFile.default(filename = filename, ..., ext = ext, FUN = FUN): File already exists: StormData.csv
-```
-
-```r
 StormData <- data.table(read.csv("StormData.csv"))
 
 # Collapse all of the different Hurricanes names into a list so that
@@ -142,6 +135,8 @@ StormData.Cleaned %>%
     arrange(desc(Injuries)) -> Injuries.Summary
 ```
 
+## Results
+
 ### Economic Data
 
 #### Property Damage
@@ -156,7 +151,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Sat Oct 24 00:14:02 2015 -->
+<!-- Sat Oct 24 00:21:32 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Property.Damage </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 3212258.16 </td> </tr>
@@ -188,7 +183,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Sat Oct 24 00:14:02 2015 -->
+<!-- Sat Oct 24 00:21:32 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Crop.Damage </th>  </tr>
   <tr> <td> HAIL </td> <td align="right"> 579596.28 </td> </tr>
@@ -224,6 +219,8 @@ p2 <- ggplot(head(Crops.Summary, 15), aes(x=Event.Type, y = Crop.Damage, fill=Ev
     ggtitle("Top 15 Crop Damage Related\nEvent Categories") +
     theme(axis.text.x = element_text(angle=45, size=12, hjust=1))
 
+# Arrange the plot into a 1x2 frame.
+
 grid.arrange(p1, p2, ncol=1, nrow =2)
 ```
 
@@ -240,7 +237,7 @@ print(xt, floating=FALSE, type="html", include.rownames = FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Sat Oct 24 00:14:03 2015 -->
+<!-- Sat Oct 24 00:21:34 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Injuries </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 91346.00 </td> </tr>
@@ -268,7 +265,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Sat Oct 24 00:14:03 2015 -->
+<!-- Sat Oct 24 00:21:34 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Fatalities </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 5633.00 </td> </tr>
@@ -301,6 +298,8 @@ p4 <- ggplot(head(Injuries.Summary, 15), aes(x=Event.Type, y = Injuries, fill=Ev
     xlab("Event Type") + ylab("Injuries") +
     ggtitle("Top 15 Injury Related\nEvent Categories") +
     theme(axis.text.x = element_text(angle=45, size=12, hjust=1))
+
+# Arrange the plot into a 1x2 frame.
 
 grid.arrange(p3, p4, ncol=1, nrow =2)
 ```
