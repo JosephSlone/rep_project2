@@ -5,10 +5,23 @@ date: "October 23, 2015"
 output: html_document
 ---
 
-# Initial Setup
+# Storm Data Analysis From NOAA Data, 1950-2011
 
-This preliminary code loads the required libraries and initializes some constants It then downloads and unzips the source data file.
+## Synopsis
 
+This "R Markdown Report" analyzes data from the NOAA Storm Database.  The database covers storm records from 1950 through November 2011. This report is intended to answer the two questions:
+
+1) Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
+
+2) Across the United States, which types of events have the greatest economic consequences?
+
+Preliminary investigation of the database reveals that the event type for some of the early records do not comply with the Storm Data Documentation found on NOAA's web site.  Therefore, the event type column has been programatically modified so that the most commonly found in the earlier dates are in-line with NOAA's current guidelines.
+
+## Data Processing
+
+### Initialization Code
+
+This preliminary code loads the required libraries and initializes some constants. It then downloads and unzips the source data file.  The 'weather_event_labels' vector that is used for modifying the event types column comes from data in the NOAA Storm Documentation pdf file.  Since the various hurricanes are named individually in the database, the event types for the named hurricanes will be changed to the single 'HURRICANE' label.
 
 
 ```{r initial_code, warning=FALSE, message=FALSE, echo=TRUE}
@@ -54,8 +67,8 @@ weather_event_labels <- toupper(c("Astronomical Low Tide",  "Avalanche",
                           "Winter Storm", "Winter Weather"))
 
 
-#download.file(data.file.URL, target.file)
-#bunzip2(target.file)
+download.file(data.file.URL, target.file)
+bunzip2(target.file)
 StormData <- data.table(read.csv("StormData.csv"))
 
 # Collapse all of the different Hurricanes names into a list so that
@@ -69,7 +82,9 @@ Hurricanes <- unique(as.character(HurricaneData$EVTYPE))
 
 
 
-## Process the data
+### Data Cleaning and Summarizing
+
+This code chunk modifies the StormData table and brings it line with the current NOAA guidelines.  It also renames all named hurricane event types to a single type.  Each type of damage (economic or population) is then summarized individualy.
 
 ```{r process_data }
 # Clean the data.  Converting the older event types into the modern
@@ -121,7 +136,9 @@ StormData.Cleaned %>%
 
 ```
 
-## Crop Damage
+### Economic Data
+
+#### Property Damage
 
 Cost is in dollars, not adjusted for inflation.
 
@@ -132,7 +149,7 @@ xt <- xtable(head(Property.Summary, 15))
 print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
-## Property Damage
+#### Crop Damage
 
 Cost is in dollars, not adjusted for inflation.
 
@@ -142,6 +159,7 @@ xt <- xtable(head(Crops.Summary, 15))
 
 print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
+
 
 ```{r Plot1, fig.align='left', fig.width=10, fig.height=16}
 
@@ -163,9 +181,9 @@ grid.arrange(p1, p2, ncol=1, nrow =2)
 
 ```
 
+### Population Health
 
-
-## Injuries
+#### Mortality and Injuries
 
 ```{r Injuries, results="asis"}
 
@@ -173,7 +191,7 @@ xt <- xtable(head(Injuries.Summary, 15))
 print(xt, floating=FALSE, type="html", include.rownames = FALSE)
 ```
 
-## Fatalities
+#### Fatalities
 ```{r Fatalities, results="asis", fig.align='left'}
 
 xt <- xtable(head(Fatalities.Summary, 15))
