@@ -132,7 +132,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 22:39:12 2015 -->
+<!-- Fri Oct 23 23:28:11 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Property.Damage </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 3212258.16 </td> </tr>
@@ -164,7 +164,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 22:39:12 2015 -->
+<!-- Fri Oct 23 23:28:11 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Crop.Damage </th>  </tr>
   <tr> <td> HAIL </td> <td align="right"> 579596.28 </td> </tr>
@@ -189,21 +189,20 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 p1 <- ggplot(head(Property.Summary, 15), aes(x=Event.Type, y = Property.Damage, fill=Event.Type)) + 
     geom_bar(stat="identity", width=.75, position=position_dodge(width=.8)) +
     xlab("Event Type") + ylab("Property Damage in Dollars") +
-    ggtitle("Top 15 Property Damage Related Event Categories") +
-    theme(axis.text.x = element_blank())
+    ggtitle("Top 15 Property Damage Related\nEvent Categories") +
+    theme(axis.text.x = element_text(angle=45, size=12, hjust=1))
 
-p2 <- ggplot(head(Crops.Summary, 15), aes(x=Event.Type, y = Crops.Damage, fill=Event.Type)) + 
+
+p2 <- ggplot(head(Crops.Summary, 15), aes(x=Event.Type, y = Crop.Damage, fill=Event.Type)) + 
     geom_bar(stat="identity", width=.75, position=position_dodge(width=.8)) +
     xlab("Event Type") + ylab("Crop Damage in Dollars") +
-    ggtitle("Top 15 Crop Damage Related Event Categories") +
-    theme(axis.text.x = element_blank())
+    ggtitle("Top 15 Crop Damage Related\nEvent Categories") +
+    theme(axis.text.x = element_text(angle=45, size=12, hjust=1))
 
-grid.arrange(p1, p2, ncol=2, nrow =1)
+grid.arrange(p1, p2, ncol=1, nrow =2)
 ```
 
-```
-## Error in eval(expr, envir, enclos): object 'Crops.Damage' not found
-```
+<img src="figure/Plot1-1.png" title="plot of chunk Plot1" alt="plot of chunk Plot1" style="display: block; margin: auto auto auto 0;" />
 
 
 
@@ -216,7 +215,7 @@ print(xt, floating=FALSE, type="html", include.rownames = FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 22:39:16 2015 -->
+<!-- Fri Oct 23 23:28:13 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Injuries </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 91346.00 </td> </tr>
@@ -244,7 +243,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 22:39:16 2015 -->
+<!-- Fri Oct 23 23:28:13 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Fatalities </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 5633.00 </td> </tr>
@@ -269,16 +268,16 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 p3 <- ggplot(head(Fatalities.Summary, 15), aes(x=Event.Type, y = Fatalities, fill=Event.Type)) + 
     geom_bar(stat="identity", width=.75, position=position_dodge(width=.8)) +
     xlab("Event Type") + ylab("Fatalities") +
-    ggtitle("Top 15 Fatality Related Event Categories") +
-    theme(axis.text.x = element_blank())
+    ggtitle("Top 15 Fatality Related\nEvent Categories") +
+    theme(axis.text.x = element_text(angle=45, size=12, hjust=1))
 
 p4 <- ggplot(head(Injuries.Summary, 15), aes(x=Event.Type, y = Injuries, fill=Event.Type)) + 
     geom_bar(stat="identity", width=.75, position=position_dodge(width=.8)) +
     xlab("Event Type") + ylab("Injuries") +
-    ggtitle("Top 15 Injury Related Event Categories") +
-    theme(axis.text.x = element_blank())
+    ggtitle("Top 15 Injury Related\nEvent Categories") +
+    theme(axis.text.x = element_text(angle=45, size=12, hjust=1))
 
-grid.arrange(p3, p4, ncol=2, nrow =1)
+grid.arrange(p3, p4, ncol=1, nrow =2)
 ```
 
 <img src="figure/Plot2-1.png" title="plot of chunk Plot2" alt="plot of chunk Plot2" style="display: block; margin: auto auto auto 0;" />
