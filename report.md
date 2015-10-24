@@ -20,6 +20,7 @@ library(tidyr)
 library(RColorBrewer)
 library(ggplot2)
 library(xtable)
+library(gridExtra)
 
 # The URL of the source data file.
 
@@ -56,13 +57,13 @@ weather_event_labels <- toupper(c("Astronomical Low Tide",  "Avalanche",
 
 #download.file(data.file.URL, target.file)
 #bunzip2(target.file)
-#StormData <- data.table(read.csv("StormData.csv"))
+StormData <- data.table(read.csv("StormData.csv"))
 
 # Collapse all of the different Hurricanes names into a list so that
 # we can have a generic "Hurricane Category
 
-#StormData %>% filter(grepl("Hurricane|HURRICANE",EVTYPE)) -> HurricaneData
-#Hurricanes <- unique(as.character(HurricaneData$EVTYPE))
+StormData %>% filter(grepl("Hurricane|HURRICANE",EVTYPE)) -> HurricaneData
+Hurricanes <- unique(as.character(HurricaneData$EVTYPE))
 ```
 
 
@@ -118,6 +119,7 @@ StormData.Cleaned %>%
     summarise_each(funs(sum)) %>%
     arrange(desc(Injuries)) -> Injuries.Summary
 ```
+
 ## Crop Damage
 
 Cost is in dollars, not adjusted for inflation.
@@ -130,7 +132,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 14:10:25 2015 -->
+<!-- Fri Oct 23 22:39:12 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Property.Damage </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 3212258.16 </td> </tr>
@@ -162,7 +164,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 14:10:25 2015 -->
+<!-- Fri Oct 23 22:39:12 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Crop.Damage </th>  </tr>
   <tr> <td> HAIL </td> <td align="right"> 579596.28 </td> </tr>
@@ -182,6 +184,29 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
   <tr> <td> LIGHTNING </td> <td align="right"> 3580.61 </td> </tr>
    </table>
 
+
+```r
+p1 <- ggplot(head(Property.Summary, 15), aes(x=Event.Type, y = Property.Damage, fill=Event.Type)) + 
+    geom_bar(stat="identity", width=.75, position=position_dodge(width=.8)) +
+    xlab("Event Type") + ylab("Property Damage in Dollars") +
+    ggtitle("Top 15 Property Damage Related Event Categories") +
+    theme(axis.text.x = element_blank())
+
+p2 <- ggplot(head(Crops.Summary, 15), aes(x=Event.Type, y = Crops.Damage, fill=Event.Type)) + 
+    geom_bar(stat="identity", width=.75, position=position_dodge(width=.8)) +
+    xlab("Event Type") + ylab("Crop Damage in Dollars") +
+    ggtitle("Top 15 Crop Damage Related Event Categories") +
+    theme(axis.text.x = element_blank())
+
+grid.arrange(p1, p2, ncol=2, nrow =1)
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'Crops.Damage' not found
+```
+
+
+
 ## Injuries
 
 
@@ -191,7 +216,7 @@ print(xt, floating=FALSE, type="html", include.rownames = FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 14:10:25 2015 -->
+<!-- Fri Oct 23 22:39:16 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Injuries </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 91346.00 </td> </tr>
@@ -219,7 +244,7 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 ```
 
 <!-- html table generated in R 3.2.1 by xtable 1.7-4 package -->
-<!-- Fri Oct 23 14:10:25 2015 -->
+<!-- Fri Oct 23 22:39:16 2015 -->
 <table border=1>
 <tr> <th> Event.Type </th> <th> Fatalities </th>  </tr>
   <tr> <td> TORNADO </td> <td align="right"> 5633.00 </td> </tr>
@@ -241,11 +266,19 @@ print(xt, floating=FALSE, type="html", include.rownames=FALSE)
 
 
 ```r
-ggplot(head(Fatalities.Summary, 15), aes(x=Event.Type, y = Fatalities, fill=Event.Type)) + 
+p3 <- ggplot(head(Fatalities.Summary, 15), aes(x=Event.Type, y = Fatalities, fill=Event.Type)) + 
     geom_bar(stat="identity", width=.75, position=position_dodge(width=.8)) +
     xlab("Event Type") + ylab("Fatalities") +
-    ggtitle("Top 15 Fatalities") +
+    ggtitle("Top 15 Fatality Related Event Categories") +
     theme(axis.text.x = element_blank())
+
+p4 <- ggplot(head(Injuries.Summary, 15), aes(x=Event.Type, y = Injuries, fill=Event.Type)) + 
+    geom_bar(stat="identity", width=.75, position=position_dodge(width=.8)) +
+    xlab("Event Type") + ylab("Injuries") +
+    ggtitle("Top 15 Injury Related Event Categories") +
+    theme(axis.text.x = element_blank())
+
+grid.arrange(p3, p4, ncol=2, nrow =1)
 ```
 
-<img src="figure/Fatalities.plot-1.png" title="plot of chunk Fatalities.plot" alt="plot of chunk Fatalities.plot" style="display: block; margin: auto auto auto 0;" />
+<img src="figure/Plot2-1.png" title="plot of chunk Plot2" alt="plot of chunk Plot2" style="display: block; margin: auto auto auto 0;" />
